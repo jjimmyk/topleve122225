@@ -66,5 +66,11 @@ export const OPERATIONAL_PERIOD_PHASES: Omit<DisasterPhase, 'completed' | 'data'
     name: 'Layers',
     shortName: 'Layers',
     description: 'Data layers and map overlays'
+  },
+  {
+    id: 'planning-p',
+    name: 'Planning P',
+    shortName: 'Planning P',
+    description: 'Planning-P process and schedule'
   }
 ];

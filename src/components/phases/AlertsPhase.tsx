@@ -3,7 +3,7 @@ import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ChevronDown, ChevronRight, Edit2, Trash2, Map, X, Check, ArrowRightToLine } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit2, Trash2, Map, X, Check, ArrowRightToLine, Sparkles } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../ui/sheet';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Label } from '../ui/label';
@@ -129,6 +129,10 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
     completionNotes: data.actionCompletionResponse?.completionNotes || ''
   });
 
+  // State for ICS-204 Draft Update modal
+  const [ics204ModalOpen, setIcs204ModalOpen] = useState(false);
+  const [uasShootdownVisible, setUasShootdownVisible] = useState(false);
+
   // State for Create Incident modal
   const [createIncidentModalOpen, setCreateIncidentModalOpen] = useState(false);
   const [createIncidentModalStep, setCreateIncidentModalStep] = useState(1);
@@ -171,30 +175,30 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
   const [alerts, setAlerts] = useState<AlertItem[]>(
     data.alerts || [
       {
-        id: 'al-activation',
-        title: 'Activation Request: Incident Alpha',
-        source: 'Incident Command',
-        severity: 'Advisory',
-        issuedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+        id: 'al-dhs-hq-threat',
+        title: 'DHS HQ Directive: Increase Threat Posture – Sector Seattle',
+        source: 'DHS Headquarters',
+        severity: 'Critical',
+        issuedAt: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         status: 'Active',
-        description: 'Activation request received for Incident Alpha. Incident Management Team deployment pending approval. Respond to acknowledge and confirm resource availability.',
-        timeSent: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
-        sentBy: 'ops.center@sector-ny.uscg.mil',
-        location: 'Sector New York - Operations Center'
+        description: 'DHS Headquarters directs all operational units in Sector Seattle to immediately increase threat posture to ELEVATED in response to a likely UAS threat. Intelligence indicates a high probability of hostile unmanned aircraft system activity targeting critical infrastructure and World Cup venue areas within the Sector Seattle AOR.',
+        timeSent: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
+        sentBy: 'ops.center@hq.dhs.gov',
+        location: 'Sector Seattle AOR'
       },
       {
-        id: 'al0',
-        title: 'Civil Disturbance Emerging Near MetLife Stadium',
-        source: 'Grist Mill via social media',
-        severity: 'Watch',
-        issuedAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-        expiresAt: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
+        id: 'al-uas-seattle',
+        title: 'Intelligence Alert: Suspected UAS Cargo – Port of Seattle',
+        source: 'Grist Mill',
+        severity: 'Critical',
+        issuedAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
+        expiresAt: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
         status: 'Active',
-        description: 'Social media monitoring indicates developing civil disturbance approximately 0.5 miles from MetLife Stadium main entrance. Crowd estimated at 200-300 individuals. Local law enforcement coordinating response. Enhanced security screening recommended for affected entry points.',
-        timeSent: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-        sentBy: 'intel.fusion@hq.dhs.gov',
-        location: 'Route 120 / Paterson Plank Road - East Rutherford, NJ'
+        description: 'Credible intelligence indicates that shipping traffic into the Port of Seattle contains a Chinese vessel barge suspected of carrying unmanned aircraft systems (UAS). Source assessment is rated high confidence. Recommend immediate coordination with port authority and CBP for inspection and interdiction posture.',
+        timeSent: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
+        sentBy: 'grist.mill@intel.dhs.gov',
+        location: 'Port of Seattle, WA'
       },
       {
         id: 'al1',
@@ -963,17 +967,18 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
       {viewMode === 'active' && (
         <div className="space-y-4">
         
-        {/* Activation Request: Incident Alpha */}
+        {/* UAS Shootdown Report – Levi Stadium TFR */}
+        {uasShootdownVisible && (
         <div
           className="border border-border rounded-lg overflow-hidden"
           style={{ background: 'linear-gradient(90deg, rgba(104, 118, 238, 0.08) 0%, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, rgb(20, 23, 26) 0%, rgb(20, 23, 26) 100%)' }}
         >
-          <div className={`p-3 ${expandedAlerts.has('activation-incident-alpha') ? 'border-b border-border' : ''}`}>
+          <div className={`p-3 ${expandedAlerts.has('uas-shootdown') ? 'border-b border-border' : ''}`}>
             <div className="flex items-start justify-between">
               <div
                 className="flex items-start gap-2 flex-1 cursor-pointer"
                 onClick={() => {
-                  const id = 'activation-incident-alpha';
+                  const id = 'uas-shootdown';
                   setExpandedAlerts(prev => {
                     const next = new Set(prev);
                     if (next.has(id)) next.delete(id); else next.add(id);
@@ -981,14 +986,14 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
                   });
                 }}
               >
-                {expandedAlerts.has('activation-incident-alpha') ? (
+                {expandedAlerts.has('uas-shootdown') ? (
                   <ChevronDown className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
                 ) : (
                   <ChevronRight className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="caption text-white">Activation Request: Incident Alpha</span>
+                    <span className="caption text-white">Field Report: UAS Neutralized Approaching Levi Stadium TFR</span>
                     <span 
                       className="caption px-2 py-0.5 rounded text-xs"
                       style={{ 
@@ -1002,91 +1007,72 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
                   </div>
                   <div className="space-y-2 mt-1">
                     <div className="flex items-center gap-3">
-                      <span className="caption text-white">From: CAPT Rachel Torres (r.torres@sector-ny.uscg.mil)</span>
-                      <span className="caption text-white">{formatMilitaryTimeUTC(new Date(Date.now() - 5 * 60 * 1000).toISOString())}</span>
+                      <span className="caption text-white">Source: Division Alpha</span>
+                      <span className="caption text-white">{formatMilitaryTimeUTC(new Date().toISOString())}</span>
                     </div>
                   </div>
                 </div>
               </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onZoomToLocation) {
+                      onZoomToLocation('-122.0886,37.4983', '36111.909643');
+                    }
+                    const mapEl = document.querySelector('arcgis-embedded-map') as any;
+                    if (mapEl?.view) {
+                      mapEl.view.goTo({ center: [-122.0886, 37.4983], zoom: 14 }, { duration: 1500 });
+                    }
+                  }}
+                  className="p-1 hover:bg-muted/30 rounded transition-colors"
+                  title="Zoom to alert location"
+                >
+                  <Map className="w-3 h-3 text-white" />
+                </button>
+              </div>
             </div>
           </div>
-          {expandedAlerts.has('activation-incident-alpha') && (
+          {expandedAlerts.has('uas-shootdown') && (
             <div className="p-4 space-y-4 bg-card/50">
               <div>
-                <label className="text-white mb-1 block">Incident Categories</label>
-                <p className="caption text-white">Security Threat, Maritime Incident</p>
-              </div>
-              <div>
-                <label className="text-white mb-1 block">Initial Situation Report</label>
-                <p className="caption text-white">Unidentified vessel detected approaching restricted maritime zone near Sector New York AOR. Vessel is non-responsive to radio hails on VHF Channel 16. Coast Guard Cutter Vessel 001 has been diverted to intercept. Strike Team Alpha placed on standby for potential boarding operations. All units maintain heightened readiness posture until situation is resolved.</p>
+                <label className="text-white mb-1 block">Incident Summary</label>
+                <p className="caption text-white">Division Alpha reports successful neutralization of an unmanned aircraft system (UAS) approaching the Levi Stadium Temporary Flight Restriction (TFR) zone. The UAS was detected by counter-UAS sensors and engaged per standing rules of engagement. The asset was downed approximately 0.5 nautical miles from the stadium perimeter with no collateral damage or injuries reported. Debris recovery and forensic analysis are underway.</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <label className="text-white block">Incident Location</label>
-                    <button
-                      onClick={() => {
-                        const mapEl = document.querySelector('arcgis-embedded-map') as any;
-                        if (mapEl?.view) {
-                          mapEl.view.goTo({ center: [-74.0445, 40.6432], zoom: 14 }, { duration: 1500 });
-                        }
-                      }}
-                      className="p-0.5 hover:bg-muted/30 rounded transition-colors shrink-0"
-                      title="Jump to location on map"
-                    >
-                      <Map className="w-3 h-3 text-white" />
-                    </button>
-                  </div>
-                  <p className="caption text-white">Upper New York Bay, Grid NY-17 (40.6432° N, 74.0445° W)</p>
+                  <label className="text-white mb-1 block">Location</label>
+                  <p className="caption text-white">Levi Stadium TFR, Santa Clara, CA</p>
                 </div>
                 <div>
-                  <label className="text-white mb-1 block">AORs</label>
-                  <p className="caption text-white">Sector New York, Sector Long Island Sound</p>
+                  <label className="text-white mb-1 block">Reporting Unit</label>
+                  <p className="caption text-white">Division Alpha — Strike Team 001</p>
                 </div>
-                <div className="col-span-2">
-                  <label className="text-white mb-1 block">Responsible Unit</label>
-                  <p className="caption text-white">Cutter Vessel 001, Strike Team Alpha, Division Bravo</p>
+                <div>
+                  <label className="text-white mb-1 block">Threat Category</label>
+                  <p className="caption text-white">UAS / Counter-UAS</p>
                 </div>
-              </div>
-              <div className="pt-2">
-                <p className="caption text-white font-medium">Your Position: Logistics Section Chief</p>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-white mb-1 block">Notes for CAPT Rachel Torres (r.torres@sector-ny.uscg.mil)</label>
-                <textarea
-                  className="w-full min-h-[80px] bg-input-background border border-border rounded-md px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-1 focus:ring-accent"
-                  placeholder="Enter notes..."
-                />
-              </div>
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={() => setActivationConfirmType('accept')}
-                  className="bg-[#01669f] hover:bg-[#01669f]/90 text-white caption px-4 py-1.5 rounded-[4px] transition-colors"
-                >
-                  Accept Activation
-                </button>
-                <button
-                  onClick={() => setActivationConfirmType('decline')}
-                  className="bg-transparent border border-[#6e757c] text-white caption px-4 py-1.5 rounded-[4px] hover:bg-[#222529] transition-colors"
-                >
-                  Decline Activation
-                </button>
+                <div>
+                  <label className="text-white mb-1 block">Outcome</label>
+                  <p className="caption text-white">UAS neutralized — no casualties</p>
+                </div>
               </div>
             </div>
           )}
         </div>
+        )}
 
-        {/* Civil Disturbance Alert - Grist Mill Social Media */}
+        {/* DHS HQ Directive: Increase Threat Posture – Sector Seattle */}
         <div
           className="border border-border rounded-lg overflow-hidden"
           style={{ background: 'linear-gradient(90deg, rgba(104, 118, 238, 0.08) 0%, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, rgb(20, 23, 26) 0%, rgb(20, 23, 26) 100%)' }}
         >
-          <div className={`p-3 ${expandedAlerts.has('civil-disturbance-grist') ? 'border-b border-border' : ''}`}>
+          <div className={`p-3 ${expandedAlerts.has('dhs-hq-threat-posture') ? 'border-b border-border' : ''}`}>
             <div className="flex items-start justify-between">
               <div
                 className="flex items-start gap-2 flex-1 cursor-pointer"
                 onClick={() => {
-                  const id = 'civil-disturbance-grist';
+                  const id = 'dhs-hq-threat-posture';
                   setExpandedAlerts(prev => {
                     const next = new Set(prev);
                     if (next.has(id)) next.delete(id); else next.add(id);
@@ -1094,14 +1080,14 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
                   });
                 }}
               >
-                {expandedAlerts.has('civil-disturbance-grist') ? (
+                {expandedAlerts.has('dhs-hq-threat-posture') ? (
                   <ChevronDown className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
                 ) : (
                   <ChevronRight className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="caption text-white">Civil Disturbance Emerging Near MetLife Stadium</span>
+                    <span className="caption text-white">DHS HQ Directive: Increase Threat Posture – Sector Seattle</span>
                     <span 
                       className="caption px-2 py-0.5 rounded text-xs"
                       style={{ 
@@ -1113,28 +1099,24 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
                       Critical
                     </span>
                   </div>
-                  {!expandedAlerts.has('civil-disturbance-grist') && (
-                    <div className="space-y-2 mt-1">
-                      <div className="flex items-center gap-3">
-                        <span className="caption text-white">Grist Mill via social media</span>
-                        <span className="caption text-white">{formatMilitaryTimeUTC(new Date(Date.now() - 20 * 60 * 1000).toISOString())}</span>
-                      </div>
+                  <div className="space-y-2 mt-1">
+                    <div className="flex items-center gap-3">
+                      <span className="caption text-white">Source: DHS Headquarters</span>
+                      <span className="caption text-white">{formatMilitaryTimeUTC(new Date(Date.now() - 1 * 60 * 1000).toISOString())}</span>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Zoom to MetLife Stadium area and show marker
                     if (onZoomToLocation) {
-                      const coords = getAlertCoordinates('civil-disturbance-grist');
-                      onZoomToLocation(coords.center, coords.scale);
+                      onZoomToLocation('-122.3321,47.6062', '144447.638572');
                     }
-                    // Show red marker at MetLife Stadium
-                    if (onShowMapMarker) {
-                      onShowMapMarker('civil-disturbance-metlife', 40.8128, -74.0742, 'rgba(220, 38, 38, 0.8)');
+                    const mapEl = document.querySelector('arcgis-embedded-map') as any;
+                    if (mapEl?.view) {
+                      mapEl.view.goTo({ center: [-122.3321, 47.6062], zoom: 12 }, { duration: 1500 });
                     }
                   }}
                   className="p-1 hover:bg-muted/30 rounded transition-colors"
@@ -1145,42 +1127,152 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
               </div>
             </div>
           </div>
-
-          {expandedAlerts.has('civil-disturbance-grist') && (
+          {expandedAlerts.has('dhs-hq-threat-posture') && (
             <div className="p-4 space-y-4 bg-card/50">
               <div>
-                <label className="text-white mb-1 block">Civil Disturbance Alert</label>
-                <p className="caption text-white">
-                  Social media intelligence indicates emerging civil disturbance near MetLife Stadium main entrance on Route 120 / Paterson Plank Road. Crowd size estimated at 200-300 individuals based on multiple geotagged posts. Social media users describe opposition to the Iranian soccer team playing in a match today at 14:00 EST.
-                </p>
+                <label className="text-white mb-1 block">Directive Summary</label>
+                <p className="caption text-white">DHS Headquarters directs all operational units in Sector Seattle to immediately increase threat posture to ELEVATED in response to a likely UAS threat. Intelligence indicates a high probability of hostile unmanned aircraft system activity targeting critical infrastructure and World Cup venue areas within the Sector Seattle AOR. All units are to activate enhanced surveillance protocols, establish counter-UAS watch stations, and coordinate with local law enforcement and FAA for airspace monitoring.</p>
               </div>
-
-              <div>
-                <label className="text-white mb-1 block">Data Source</label>
-                <p className="caption text-white">Grist Mill via social media</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white mb-1 block">Affected Area</label>
+                  <p className="caption text-white">Sector Seattle AOR</p>
+                </div>
+                <div>
+                  <label className="text-white mb-1 block">Issuing Authority</label>
+                  <p className="caption text-white">DHS Headquarters</p>
+                </div>
+                <div>
+                  <label className="text-white mb-1 block">Threat Category</label>
+                  <p className="caption text-white">UAS / Counter-UAS</p>
+                </div>
+                <div>
+                  <label className="text-white mb-1 block">Posture Level</label>
+                  <p className="caption text-white">ELEVATED</p>
+                </div>
               </div>
-
               <div>
-                <label className="text-white mb-1 block">Location</label>
-                <p className="caption text-white">Vicinity of Metlife Stadium</p>
-              </div>
-
-              <div>
-                <label className="text-white mb-1 block">Recommended Actions</label>
-                <Button
-                  onClick={() => {
-                    setCreateIncidentModalOpen(true);
-                  }}
-                  className="bg-primary hover:bg-primary/90 text-white px-3 h-auto text-xs"
-                  style={{ paddingTop: '4px', paddingBottom: '4px' }}
-                >
-                  Create Incident & Activate IMT
-                </Button>
+                <label className="text-white mb-1 block">Required Actions</label>
+                <div className="space-y-3 mt-2">
+                  <div className="rounded-md p-3" style={{ backgroundColor: 'rgba(139, 92, 246, 0.08)' }}>
+                    <p className="caption text-white">Activate enhanced counter-UAS surveillance and detection protocols across all Sector Seattle watch stations and World Cup venue perimeters.</p>
+                  </div>
+                  <div className="rounded-md p-3" style={{ backgroundColor: 'rgba(139, 92, 246, 0.08)' }}>
+                    <p className="caption text-white">Coordinate with FAA and local law enforcement to enforce expanded temporary flight restrictions and airspace monitoring in the Sector Seattle AOR.</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </div>
-        
+
+        {/* Intelligence Alert: Suspected UAS Cargo – Port of Seattle */}
+        <div
+          className="border border-border rounded-lg overflow-hidden"
+          style={{ background: 'linear-gradient(90deg, rgba(104, 118, 238, 0.08) 0%, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, rgb(20, 23, 26) 0%, rgb(20, 23, 26) 100%)' }}
+        >
+          <div className={`p-3 ${expandedAlerts.has('uas-seattle-intel') ? 'border-b border-border' : ''}`}>
+            <div className="flex items-start justify-between">
+              <div
+                className="flex items-start gap-2 flex-1 cursor-pointer"
+                onClick={() => {
+                  const id = 'uas-seattle-intel';
+                  setExpandedAlerts(prev => {
+                    const next = new Set(prev);
+                    if (next.has(id)) next.delete(id); else next.add(id);
+                    return next;
+                  });
+                }}
+              >
+                {expandedAlerts.has('uas-seattle-intel') ? (
+                  <ChevronDown className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
+                )}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="caption text-white">Intelligence Alert: Suspected UAS Cargo – Port of Seattle</span>
+                    <span 
+                      className="caption px-2 py-0.5 rounded text-xs"
+                      style={{ 
+                        backgroundColor: `${getSeverityColor('Critical')}20`,
+                        color: getSeverityColor('Critical'),
+                        border: `1px solid ${getSeverityColor('Critical')}60`
+                      }}
+                    >
+                      Critical
+                    </span>
+                  </div>
+                  <div className="space-y-2 mt-1">
+                    <div className="flex items-center gap-3">
+                      <span className="caption text-white">Source: Grist Mill</span>
+                      <span className="caption text-white">{formatMilitaryTimeUTC(new Date(Date.now() - 2 * 60 * 1000).toISOString())}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onZoomToLocation) {
+                      onZoomToLocation('-122.3321,47.6062', '144447.638572');
+                    }
+                    const mapEl = document.querySelector('arcgis-embedded-map') as any;
+                    if (mapEl?.view) {
+                      mapEl.view.goTo({ center: [-122.3321, 47.6062], zoom: 12 }, { duration: 1500 });
+                    }
+                  }}
+                  className="p-1 hover:bg-muted/30 rounded transition-colors"
+                  title="Zoom to alert location"
+                >
+                  <Map className="w-3 h-3 text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+          {expandedAlerts.has('uas-seattle-intel') && (
+            <div className="p-4 space-y-4 bg-card/50">
+              <div>
+                <label className="text-white mb-1 block">Intelligence Summary</label>
+                <p className="caption text-white">Credible intelligence indicates that shipping traffic into the Port of Seattle contains a Chinese vessel barge suspected of carrying unmanned aircraft systems (UAS). Source assessment is rated high confidence. Recommend immediate coordination with port authority and CBP for inspection and interdiction posture.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white mb-1 block">Location</label>
+                  <p className="caption text-white">Port of Seattle, WA</p>
+                </div>
+                <div>
+                  <label className="text-white mb-1 block">Data Source</label>
+                  <p className="caption text-white">Grist Mill</p>
+                </div>
+                <div>
+                  <label className="text-white mb-1 block">Threat Category</label>
+                  <p className="caption text-white">UAS / Counter-UAS, Maritime Security</p>
+                </div>
+                <div>
+                  <label className="text-white mb-1 block">Confidence Level</label>
+                  <p className="caption text-white">High</p>
+                </div>
+              </div>
+              <div>
+                <label className="text-white mb-1 block">Recommended Actions</label>
+                <div className="space-y-3 mt-2">
+                  <div className="rounded-md p-3" style={{ backgroundColor: 'rgba(139, 92, 246, 0.08)' }}>
+                    <p className="caption text-white">Update ICS-204 in Current IAP: Patrol the waters surrounding Levi Stadium to surveil and identify any UAS assets in the area.</p>
+                    <button
+                      onClick={() => setIcs204ModalOpen(true)}
+                      className="bg-[#01669f] h-[22.75px] rounded-[4px] hover:bg-[#01669f]/90 transition-colors flex items-center justify-center px-3 mt-2"
+                    >
+                      <p className="caption text-nowrap text-white">Draft Update</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Action Assignment Notification */}
         {!actionCompletionSubmitted && <div
           className="border border-border rounded-lg overflow-hidden"
@@ -3761,6 +3853,163 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
               {activationConfirmType === 'accept' ? 'Accept Activation' : 'Decline Activation'}
             </button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ICS-204 Draft Update Modal */}
+      <Dialog open={ics204ModalOpen} onOpenChange={setIcs204ModalOpen}>
+        <DialogContent className="bg-[#222529] border-[#6e757c] text-white" style={{ maxWidth: '1080px', maxHeight: '60vh', display: 'flex', flexDirection: 'column' }}>
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="text-white">ICS-204 — Assignment List</DialogTitle>
+            <DialogDescription className="text-white/70 flex items-center justify-between">
+              <span>Current Incident Action Plan — Operational Period 2</span>
+              <span>Assigned Work Group: Division Alpha</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-2 overflow-y-auto flex-1 min-h-0 pr-1">
+            {/* Recommended Update Highlight */}
+            <div className="border border-purple-500/50 rounded-lg overflow-hidden" style={{ backgroundColor: 'rgba(139, 92, 246, 0.12)' }}>
+              <div className="p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-300" />
+                    <span className="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-medium">Recommended Update</span>
+                  </div>
+                  <button
+                    className="p-1 hover:bg-purple-500/20 rounded transition-colors"
+                    title="Edit Recommended Update"
+                  >
+                    <Edit2 className="w-4 h-4 text-white/70" />
+                  </button>
+                </div>
+                <p className="text-white text-sm font-medium">UAS Surveillance Patrol — Levi Stadium Waters</p>
+                <p className="text-white/70 text-xs mt-1">Patrol the waters surrounding Levi Stadium to surveil and identify any UAS assets in the area.</p>
+                <div className="flex items-center gap-4 mt-2 text-xs text-white/50">
+                  <span>Start: Immediate</span>
+                </div>
+
+                <div className="mt-3 border-t border-purple-500/30 pt-3">
+                  <label className="text-white/50 text-xs block mb-2">Resources for this Assignment</label>
+                  <div className="border border-border rounded-md overflow-hidden">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-border" style={{ backgroundColor: 'rgba(139, 92, 246, 0.10)' }}>
+                          <th className="text-left px-3 py-1.5 text-white/70 font-medium">Resource</th>
+                          <th className="text-left px-3 py-1.5 text-white/70 font-medium">Identifier</th>
+                          <th className="text-left px-3 py-1.5 text-white/70 font-medium">Current Op Period Work Availability</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-border">
+                          <td className="px-3 py-1.5 text-white">Patrol Boat CG-25502</td>
+                          <td className="px-3 py-1.5 text-white">PB-25502</td>
+                          <td className="px-3 py-1.5 text-green-400">Unassigned Available</td>
+                        </tr>
+                        <tr>
+                          <td className="px-3 py-1.5 text-white">UAS Detection Kit Bravo</td>
+                          <td className="px-3 py-1.5 text-white">UDK-B</td>
+                          <td className="px-3 py-1.5 text-green-400">Unassigned Available</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Work Assignments */}
+            <div>
+              <label className="text-white text-sm font-semibold block mb-2">Existing Work Assignments</label>
+              <div className="space-y-2">
+                {[
+                  { id: 'wa-1', title: 'Perimeter Patrol — Levi Stadium Waterfront', assignedTo: 'Strike Team 001', start: '0600L', status: 'Active', description: 'Maintain continuous patrol of the waterfront perimeter surrounding Levi Stadium. Monitor for unauthorized vessel traffic and report anomalies.' },
+                  { id: 'wa-2', title: 'Port Entry Screening — Pier 27', assignedTo: 'Marine Safety Unit SF', start: '0700L', status: 'Active', description: 'Conduct enhanced screening of all inbound commercial vessels at Pier 27. Coordinate with CBP for cargo manifest verification.' },
+                  { id: 'wa-3', title: 'Comms Relay — Channel 16 Monitoring', assignedTo: 'Comms Unit', start: '0600L', status: 'Active', description: 'Maintain continuous VHF Channel 16 watch and relay critical communications between field units and the Incident Command Post.' }
+                ].map((wa) => (
+                  <div
+                    key={wa.id}
+                    className="border border-border rounded-lg overflow-hidden"
+                    style={{ background: 'linear-gradient(90deg, rgba(2, 163, 254, 0.08) 0%, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, rgb(20, 23, 26) 0%, rgb(20, 23, 26) 100%)' }}
+                  >
+                    <div className={`p-3 ${expandedAlerts.has(wa.id) ? 'border-b border-border' : ''}`}>
+                      <div className="flex items-start justify-between">
+                        <div
+                          className="flex items-start gap-2 flex-1 cursor-pointer"
+                          onClick={() => {
+                            setExpandedAlerts(prev => {
+                              const next = new Set(prev);
+                              if (next.has(wa.id)) next.delete(wa.id); else next.add(wa.id);
+                              return next;
+                            });
+                          }}
+                        >
+                          {expandedAlerts.has(wa.id) ? (
+                            <ChevronDown className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 text-white flex-shrink-0 mt-0.5" />
+                          )}
+                          <div className="flex-1">
+                            <span className="caption text-white">{wa.title}</span>
+                            {!expandedAlerts.has(wa.id) && (
+                              <div className="flex items-center gap-3 mt-1">
+                                <span className="caption text-white">{wa.assignedTo} • Start: {wa.start}</span>
+                                <span className="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/40">{wa.status}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {expandedAlerts.has(wa.id) && (
+                      <div className="p-4 space-y-3 bg-card/50">
+                        <div>
+                          <label className="text-white/50 text-xs block mb-1">Description</label>
+                          <p className="caption text-white">{wa.description}</p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <label className="text-white/50 text-xs block mb-1">Assigned To</label>
+                            <p className="caption text-white">{wa.assignedTo}</p>
+                          </div>
+                          <div>
+                            <label className="text-white/50 text-xs block mb-1">Start Time</label>
+                            <p className="caption text-white">{wa.start}</p>
+                          </div>
+                          <div>
+                            <label className="text-white/50 text-xs block mb-1">Status</label>
+                            <span className="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/40">{wa.status}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex gap-3 mt-4 flex-shrink-0">
+            <Button
+              onClick={() => setIcs204ModalOpen(false)}
+              variant="outline"
+              className="border-border text-white hover:bg-muted/20"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setIcs204ModalOpen(false);
+                toast.success('204 update notification sent to Division Alpha.');
+                setTimeout(() => {
+                  setUasShootdownVisible(true);
+                }, 5000);
+              }}
+              className="bg-[#01669f] hover:bg-[#01669f]/90 text-white"
+            >
+              Submit Update
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

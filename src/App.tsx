@@ -65,8 +65,8 @@ export default function App() {
   const chatDragStart = useRef<{ x: number; y: number } | null>(null);
   const [chatFloatingBottom, setChatFloatingBottom] = useState(false);
   const [awaitingInfraOverlay, setAwaitingInfraOverlay] = useState(false);
-  const [mapCenter, setMapCenter] = useState<string>('-74.03131343667845,40.761717806888804');
-  const [mapScale, setMapScale] = useState<string>('72223.819286');
+  const [mapCenter, setMapCenter] = useState<string>('-80.16200440365937,25.87478023462914');
+  const [mapScale, setMapScale] = useState<string>('577790.554289');
   const [mapMarkers, setMapMarkers] = useState<Array<{ id: string; lat: number; lon: number; color: string }>>([]);
 
   // Removed simulated sample resources and related chat helper
@@ -365,6 +365,8 @@ export default function App() {
         return <ResourcesPhase {...commonProps} />;
       case 'layers':
         return <LayersPhase {...commonProps} />;
+      case 'planning-p':
+        return <div className="flex-1 overflow-auto p-6" />;
       case 'safety-analysis':
         return <SafetyAnalysisPhase {...commonProps} />;
       default:
@@ -398,10 +400,10 @@ export default function App() {
         <div className="w-full h-[300px] border border-border rounded-lg overflow-hidden">
           <arcgis-embedded-map
             style={{ height: '100%', width: '100%', display: 'block' }}
-            item-id="6cfd425bdabc430789213e791dc6acb9"
+            item-id="c1a7e5587f4941f49d340d49dc7a0000"
             theme="light"
-            center="-74.03131343667845,40.761717806888804"
-            scale="72223.819286"
+            center="-80.16200440365937,25.87478023462914"
+            scale="577790.554289"
             portal-url="https://disastertech.maps.arcgis.com"
           />
         </div>
@@ -576,7 +578,7 @@ export default function App() {
                         <div className="w-full border border-border rounded-lg overflow-hidden bg-card relative" style={{ height: '600px', width: '700px' }}>
                           <arcgis-embedded-map
                             style={{ height: '600px', width: '100%', display: 'block' }}
-                            item-id="6cfd425bdabc430789213e791dc6acb9"
+                            item-id="c1a7e5587f4941f49d340d49dc7a0000"
                             theme="light"
                             center="-74.03131343667845,40.761717806888804"
                             scale="72223.819286"
@@ -697,7 +699,7 @@ export default function App() {
           <div className="absolute inset-0">
             <arcgis-embedded-map
               style={{ height: '100%', width: '100%', display: 'block' }}
-              item-id="6cfd425bdabc430789213e791dc6acb9"
+              item-id="c1a7e5587f4941f49d340d49dc7a0000"
               theme="light"
               center={mapCenter}
               scale={mapScale}
@@ -767,6 +769,33 @@ export default function App() {
           
           {/* My Sector and Exit Map Button - positioned above map and data layers */}
           <div className="absolute top-4 right-4 z-40 flex items-center gap-3">
+            <div 
+              className="px-4 py-2 rounded-lg border border-purple-500/50 text-white font-medium flex items-center gap-2"
+              style={{
+                backgroundColor: '#2d1b4e',
+                boxShadow: '0 0 20px rgba(147, 51, 234, 0.2), 0 0 40px rgba(147, 51, 234, 0.1)'
+              }}
+            >
+              <span>Incident: San Francisco FIFA World Cup</span>
+            </div>
+            <div 
+              className="px-4 py-2 rounded-lg border border-purple-500/50 text-white font-medium flex items-center gap-2"
+              style={{
+                backgroundColor: '#2d1b4e',
+                boxShadow: '0 0 20px rgba(147, 51, 234, 0.2), 0 0 40px rgba(147, 51, 234, 0.1)'
+              }}
+            >
+              <span>My Role: IC</span>
+            </div>
+            <div 
+              className="px-4 py-2 rounded-lg border border-purple-500/50 text-white font-medium flex items-center gap-2"
+              style={{
+                backgroundColor: '#2d1b4e',
+                boxShadow: '0 0 20px rgba(147, 51, 234, 0.2), 0 0 40px rgba(147, 51, 234, 0.1)'
+              }}
+            >
+              <span>Phase: Tactics Meeting</span>
+            </div>
             {/* My Sector Component */}
             <div 
               className="px-4 py-2 rounded-lg border border-purple-500/50 text-white font-medium flex items-center gap-2"
@@ -775,14 +804,14 @@ export default function App() {
                 boxShadow: '0 0 20px rgba(147, 51, 234, 0.2), 0 0 40px rgba(147, 51, 234, 0.1)'
               }}
             >
-              <span>My AOR: New York</span>
+              <span>Sector San Francisco</span>
               <button
                 onClick={() => {
-                  setMapCenter('-74.0060,40.7128');
+                  setMapCenter('-122.4194,37.7749');
                   setMapScale('144447.638572');
                 }}
                 className="hover:bg-purple-600/30 rounded p-1 transition-colors"
-                title="Zoom to New York"
+                title="Zoom to San Francisco"
               >
                 <Map className="w-4 h-4" />
               </button>

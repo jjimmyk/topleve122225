@@ -98,6 +98,7 @@ export function PlanningPStepper({ phases, currentPhaseId, onPhaseSelect, operat
                   {phase.id === 'incident-roster' && <MapPin className="w-4 h-4" />}
                   {phase.id === 'resources' && <Box className="w-4 h-4" />}
                   {phase.id === 'layers' && <Layers className="w-4 h-4" />}
+                  {phase.id === 'planning-p' && <span className="w-4 h-4 flex items-center justify-center font-bold text-xs">P</span>}
                 </div>
                 
                 {/* Descriptive text for Operational Period 0 */}

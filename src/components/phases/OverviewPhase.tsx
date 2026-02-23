@@ -308,8 +308,8 @@ export function OverviewPhase({ data, onDataChange, onAddAIContext }: OverviewPh
         }).replace(',', ''),
         updateFrequency: 'Real-time',
         provider: 'Integrated Emergency Management System',
-        description: `Comprehensive list of all active emergency incidents and responses within ${regionCoverage}. Includes incident type, severity, status, responding agencies, affected areas, resource allocation, and operational priorities. Provides regional situational awareness across all concurrent emergency operations.`,
-        dataTypes: ['Incident Type', 'Severity Level', 'Status', 'Location', 'Responding Agencies', 'Resources Deployed'],
+        description: `Comprehensive list of all active emergency incidents and responses within ${regionCoverage}. Includes Category, severity, status, responding agencies, affected areas, resource allocation, and operational priorities. Provides regional situational awareness across all concurrent emergency operations.`,
+        dataTypes: ['Category', 'Severity Level', 'Status', 'Location', 'Responding Agencies', 'Resources Deployed'],
         coverage: regionCoverage,
         reliability: '99.9% uptime',
         dataSources: 'FEMA IPAWS, State EOC, Local Emergency Dispatch, USCG Command Centers, DHS NIMS'

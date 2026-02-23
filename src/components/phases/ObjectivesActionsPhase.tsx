@@ -45,16 +45,11 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
   // Helper functions for severity (defined before state to use in initial sort)
   const getIncidentSeverityHelper = (id: string): 'Minor' | 'Moderate' | 'Serious' | 'Severe' | 'Critical' => {
     switch (id) {
-      case '1': return 'Serious';
+      case '1': return 'Serious'; // Suspicious Package - Levi's Stadium, San Francisco
       case '1a': return 'Moderate';
       case '1b': return 'Serious';
-      case '2': return 'Moderate';
-      case '3': return 'Moderate';
-      case '3a': return 'Moderate';
-      case '3b': return 'Minor';
-      case '4': return 'Minor';
-      case '5': return 'Severe';
-      case '6': return 'Serious';
+      case '5': return 'Serious'; // Credible Threat - Seattle
+      case '6': return 'Serious'; // Cyber Attack - Miami
       default: return 'Moderate';
     }
   };
@@ -73,7 +68,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
   const initialObjectives = data.objectives || [
     {
       id: '1',
-      title: 'Suspicious Package - MetLife Stadium Gate E',
+      title: 'San Francisco FIFA World Cup Games',
       type: 'Operational',
       actions: [],
       childIncidents: [
@@ -92,46 +87,14 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
       ]
     },
     {
-      id: '2',
-      title: 'Credentialing Fraud - Counterfeit FIFA Passes',
-      type: 'Operational',
-      actions: []
-    },
-    {
-      id: '3',
-      title: 'Mass Casualty Incident - NJ Transit Station',
-      type: 'Operational',
-      actions: [],
-      childIncidents: [
-        {
-          id: '3a',
-          title: 'EMS Triage & Medical Response',
-          type: 'Operational',
-          actions: []
-        },
-        {
-          id: '3b',
-          title: 'Transit System Rerouting Operations',
-          type: 'Operational',
-          actions: []
-        }
-      ]
-    },
-    {
-      id: '4',
-      title: 'Unauthorized Drone Incursion - Stadium Airspace',
-      type: 'Operational',
-      actions: []
-    },
-    {
       id: '5',
-      title: 'Credible Threat Assessment - Domestic Extremist',
+      title: 'Seattle FIFA World Cup Games',
       type: 'Operational',
       actions: []
     },
     {
       id: '6',
-      title: 'Cyber Attack - Stadium CCTV Network Disruption',
+      title: 'Miami FIFA World Cup Games',
       type: 'Operational',
       actions: []
     }
@@ -188,7 +151,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     lastUpdate: string;
   };
 
-  // Available incident types
+  // Available Categorys
   const incidentTypes = [
     'Pipeline Spill',
     'Platform Leak',
@@ -218,7 +181,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     'Minor'
   ];
 
-  // Get incident type based on objective title
+  // Get Category based on objective title
   const getIncidentType = (objective: Objective): string => {
     const title = objective.title.toLowerCase();
     if (title.includes('suspicious package') || title.includes('bomb')) return 'Explosive Threat';
@@ -233,10 +196,16 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
   // Get AOR based on objective title
   const getIncidentAOR = (objective: Objective): string => {
     const title = objective.title.toLowerCase();
-    if (title.includes('metlife') || title.includes('gate e') || title.includes('stadium')) {
-      return 'MetLife Stadium Complex';
+    if (title.includes('levi') || title.includes('gate c') || title.includes('san francisco') || title.includes('santa clara')) {
+      return 'Levi\'s Stadium Complex - San Francisco';
     }
-    if (title.includes('transit') || title.includes('nj transit')) {
+    if (title.includes('seattle') || title.includes('lumen field')) {
+      return 'Lumen Field Complex - Seattle';
+    }
+    if (title.includes('miami') || title.includes('hard rock')) {
+      return 'Hard Rock Stadium Complex - Miami';
+    }
+    if (title.includes('transit')) {
       return 'Transit Security Operations';
     }
     if (title.includes('airspace') || title.includes('drone')) {
@@ -245,22 +214,17 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     if (title.includes('cyber') || title.includes('cctv')) {
       return 'Cyber Security Operations';
     }
-    return 'Northeast Region'; // Default
+    return 'Multi-Region Operations'; // Default
   };
 
   // Get severity level for each incident
   const getIncidentSeverity = (id: string): 'Minor' | 'Moderate' | 'Serious' | 'Severe' | 'Critical' => {
     switch (id) {
-      case '1': return 'Serious'; // Suspicious Package - MetLife Stadium
+      case '1': return 'Serious'; // Suspicious Package - Levi's Stadium, San Francisco
       case '1a': return 'Moderate'; // Perimeter Evacuation (child)
       case '1b': return 'Serious'; // EOD Response (child)
-      case '2': return 'Moderate'; // Credentialing Fraud
-      case '3': return 'Moderate'; // Mass Casualty - Transit
-      case '3a': return 'Moderate'; // EMS Triage (child)
-      case '3b': return 'Minor'; // Transit Rerouting (child, support)
-      case '4': return 'Minor'; // Unauthorized Drone
-      case '5': return 'Severe'; // Credible Threat - Domestic Extremist
-      case '6': return 'Serious'; // Cyber Attack - CCTV Network
+      case '5': return 'Serious'; // Credible Threat - Seattle World Cup Venue
+      case '6': return 'Serious'; // Cyber Attack - Miami World Cup Venue
       default: return 'Moderate';
     }
   };
@@ -292,28 +256,18 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
   // Get map coordinates for each incident location
   const getIncidentCoordinates = (id: string): { center: string; scale: string } => {
     switch (id) {
-      case '1': // MetLife Stadium, East Rutherford, NJ
-        return { center: '-74.0742,40.8128', scale: '144447.638572' };
-      case '1a': // Gate E Perimeter, MetLife Stadium (child incident)
-        return { center: '-74.0742,40.8128', scale: '72223.819286' };
+      case '1': // Levi's Stadium, Santa Clara, CA
+        return { center: '-121.9700,37.4033', scale: '144447.638572' };
+      case '1a': // Gate C Perimeter, Levi's Stadium (child incident)
+        return { center: '-121.9700,37.4033', scale: '72223.819286' };
       case '1b': // EOD Response Location (child incident)
-        return { center: '-74.0742,40.8128', scale: '36111.909643' };
-      case '2': // Credentialing Center, Meadowlands Complex
-        return { center: '-74.0785,40.8150', scale: '144447.638572' };
-      case '3': // Secaucus Junction NJ Transit Station
-        return { center: '-74.0726,40.7628', scale: '72223.819286' };
-      case '3a': // EMS Triage Area (child incident)
-        return { center: '-74.0726,40.7628', scale: '36111.909643' };
-      case '3b': // Transit Rerouting Hub (child incident)
-        return { center: '-74.0726,40.7628', scale: '144447.638572' };
-      case '4': // Stadium Airspace
-        return { center: '-74.0742,40.8128', scale: '144447.638572' };
-      case '5': // DHS Northeast Regional Office
-        return { center: '-74.0060,40.7128', scale: '144447.638572' };
-      case '6': // Stadium Security Operations Center
-        return { center: '-74.0742,40.8128', scale: '144447.638572' };
+        return { center: '-121.9700,37.4033', scale: '36111.909643' };
+      case '5': // Lumen Field, Seattle, WA
+        return { center: '-122.3321,47.5952', scale: '144447.638572' };
+      case '6': // Hard Rock Stadium, Miami Gardens, FL
+        return { center: '-80.2390,25.9580', scale: '144447.638572' };
       default:
-        return { center: '-74.0742,40.8128', scale: '72223.819286' }; // Default to MetLife Stadium
+        return { center: '-80.2390,25.9580', scale: '144447.638572' }; // Default to Hard Rock Stadium, Miami
     }
   };
 
@@ -322,19 +276,13 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     // Map incident IDs to their incident filter values
     switch (id) {
       case '1':
-        return 'suspicious-package-gate-e';
+        return 'suspicious-package-gate-c';
       case '1a':
-        return 'suspicious-package-gate-e';
+        return 'suspicious-package-gate-c';
       case '1b':
-        return 'suspicious-package-gate-e';
-      case '3':
-        return 'mass-casualty-transit';
-      case '3a':
-        return 'mass-casualty-transit';
-      case '3b':
-        return 'mass-casualty-transit';
+        return 'suspicious-package-gate-c';
       default:
-        return 'suspicious-package-gate-e';
+        return 'suspicious-package-gate-c';
     }
   };
 
@@ -342,133 +290,73 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     switch (id) {
       case '1':
         return {
-          description: 'Suspicious unattended package discovered at MetLife Stadium Gate E screening checkpoint; area evacuated and K9 explosive detection teams deployed.',
-          location: 'Gate E Entrance, MetLife Stadium, East Rutherford, NJ',
+          description: 'Suspicious unattended package discovered at Levi\'s Stadium Gate C screening checkpoint during World Cup match day operations; area evacuated and K9 explosive detection teams deployed.',
+          location: 'Gate C Entrance, Levi\'s Stadium, Santa Clara, CA',
           status: 'Active',
           startTime: 'June 28, 2026 11:45',
-          estimatedVolume: '~450 spectators in affected zone',
-          shorelineImpact: 'Screening operations halted at Gate E',
-          responsibleParty: 'DHS/TSA / FBI Joint Terrorism Task Force',
-          incidentCommander: 'TSA Federal Security Director - Robert Martinez',
+          estimatedVolume: '~500 spectators in affected zone',
+          shorelineImpact: 'Screening operations halted at Gate C',
+          responsibleParty: 'DHS/TSA / FBI Joint Terrorism Task Force - San Francisco Field Office',
+          incidentCommander: 'TSA Federal Security Director - San Francisco Region',
           lastUpdate: 'EOD team arrived on scene; package being assessed with portable X-ray; adjacent gates absorbing diverted crowd flow'
-        };
-      case '2':
-        return {
-          description: 'CBP credential verification detected multiple counterfeit FIFA VIP passes; enhanced screening protocols activated for all credential holders.',
-          location: 'VIP Credentialing Center, American Dream Complex, East Rutherford, NJ',
-          status: 'Active',
-          startTime: 'June 28, 2026 09:30',
-          estimatedVolume: '~12 counterfeit passes interdicted',
-          shorelineImpact: 'Credential verification processing slowed',
-          responsibleParty: 'CBP Document Analysis / Secret Service Intelligence Division',
-          incidentCommander: 'CBP Port Director - Jennifer Chen',
-          lastUpdate: 'Suspects detained for questioning; FIFA security liaison coordinating database cross-check; enhanced hologram verification deployed'
-        };
-      case '3':
-        return {
-          description: 'Medical emergency at Secaucus Junction NJ Transit station resulted in mass casualty incident; EMS triage and transport coordination activated.',
-          location: 'Secaucus Junction Station, Secaucus, NJ',
-          status: 'Active',
-          startTime: 'June 28, 2026 12:20',
-          estimatedVolume: '~18 casualties, 3 critical condition',
-          shorelineImpact: 'Station temporarily closed; trains rerouted',
-          responsibleParty: 'DHS/TSA Surface Division / NJ Transit Police / Local EMS',
-          incidentCommander: 'EMS Incident Commander - Station Operations',
-          lastUpdate: 'Triage complete; 15 transported to hospitals; 3 treated and released; station security sweep conducted'
-        };
-      case '4':
-        return {
-          description: 'Unauthorized commercial drone detected within stadium TFR airspace; Counter-UAS system activated and drone electronically neutralized.',
-          location: 'MetLife Stadium Airspace, East Rutherford, NJ',
-          status: 'Active',
-          startTime: 'June 28, 2026 13:45',
-          estimatedVolume: '~Single DJI Phantom 4 drone',
-          shorelineImpact: 'Airspace security breach',
-          responsibleParty: 'DHS/CBP Air and Marine Operations / FAA',
-          incidentCommander: 'Air Domain Security Coordinator',
-          lastUpdate: 'Drone forced to land via RF jamming; operator identified via geo-tracking; FBI investigating intent'
         };
       case '5':
         return {
-          description: 'FBI received credible threat intelligence regarding domestic extremist planning disruption of USA vs Mexico match; enhanced security posture implemented.',
-          location: 'MetLife Stadium and Surrounding Area',
+          description: 'FBI received credible threat intelligence regarding domestic extremist cell planning disruption of World Cup match at Lumen Field in Seattle; enhanced security posture implemented across all venue access points and surrounding transit corridors.',
+          location: 'Lumen Field and Surrounding Area, Seattle, WA',
           status: 'Active',
           startTime: 'June 27, 2026 22:15',
-          estimatedVolume: '~Single individual; associates under surveillance',
-          shorelineImpact: 'Elevated threat level - additional screening measures',
-          responsibleParty: 'FBI Joint Terrorism Task Force / DHS Intelligence & Analysis',
-          incidentCommander: 'JTTF Supervisory Special Agent',
-          lastUpdate: 'Suspect under continuous surveillance; tactical teams pre-positioned; real-time intelligence sharing with all security partners'
+          estimatedVolume: '~Two individuals; associates under surveillance',
+          shorelineImpact: 'Elevated threat level - additional screening measures at all entry points',
+          responsibleParty: 'FBI Joint Terrorism Task Force / DHS Intelligence & Analysis / Seattle PD',
+          incidentCommander: 'JTTF Supervisory Special Agent - Seattle Field Office',
+          lastUpdate: 'Suspects under continuous surveillance in Pioneer Square area; tactical teams pre-positioned at Lumen Field perimeter; real-time intelligence sharing with all security partners'
         };
       case '6':
         return {
-          description: 'Sophisticated cyber attack targeting stadium CCTV surveillance network; malware detected and network segments isolated to prevent spread.',
-          location: 'MetLife Stadium Security Operations Center',
+          description: 'Sophisticated cyber attack targeting Hard Rock Stadium CCTV surveillance network during World Cup match day in Miami; malware detected and network segments isolated to prevent spread.',
+          location: 'Hard Rock Stadium Security Operations Center, Miami Gardens, FL',
           status: 'Active',
           startTime: 'June 28, 2026 08:30',
-          estimatedVolume: '~32 cameras affected in north concourse',
+          estimatedVolume: '~40 cameras affected across north and east concourses',
           shorelineImpact: 'Reduced surveillance coverage - enhanced foot patrols deployed',
-          responsibleParty: 'DHS CISA / FBI Cyber Division / Stadium Security',
-          incidentCommander: 'CISA Cybersecurity Advisor',
+          responsibleParty: 'DHS CISA / FBI Cyber Division - Miami Field Office / Hard Rock Stadium Security',
+          incidentCommander: 'CISA Cybersecurity Advisor - Southeast Region',
           lastUpdate: 'Isolated infected network segment; backup analog cameras activated; forensic analysis underway; state-sponsored actor suspected'
         };
       case '1a':
         return {
-          description: 'Perimeter evacuation of approximately 450 spectators from Gate E area; K9 explosive detection sweep deployed following suspicious package discovery.',
-          location: 'Gate E Perimeter, MetLife Stadium, East Rutherford, NJ',
+          description: 'Perimeter evacuation of approximately 500 spectators from Gate C area; K9 explosive detection sweep deployed following suspicious package discovery.',
+          location: 'Gate C Perimeter, Levi\'s Stadium, Santa Clara, CA',
           status: 'Active',
           startTime: 'June 28, 2026 11:50',
-          estimatedVolume: '~450 spectators evacuated to safe distance',
+          estimatedVolume: '~500 spectators evacuated to safe distance',
           shorelineImpact: 'N/A - Public safety operation',
-          responsibleParty: 'TSA/DHS / NJ State Police (parent incident)',
-          incidentCommander: 'TSA Federal Security Director - Area Operations',
+          responsibleParty: 'TSA/DHS / Santa Clara PD (parent incident)',
+          incidentCommander: 'TSA Federal Security Director - San Francisco Region',
           lastUpdate: 'K9 sweep 70% complete; no additional threats detected; spectators being re-screened at adjacent gates'
         };
       case '1b':
         return {
           description: 'EOD (Explosive Ordnance Disposal) team assessment and threat neutralization; package being analyzed with portable X-ray and chemical detection.',
-          location: 'Gate E Screening Area, MetLife Stadium',
+          location: 'Gate C Screening Area, Levi\'s Stadium, Santa Clara, CA',
           status: 'Active',
           startTime: 'June 28, 2026 12:05',
           estimatedVolume: '~Single unattended backpack',
           shorelineImpact: 'Area secured - controlled access only',
           responsibleParty: 'FBI EOD / DHS (parent incident)',
-          incidentCommander: 'FBI EOD Team Leader',
+          incidentCommander: 'FBI EOD Team Leader - San Francisco Field Office',
           lastUpdate: 'X-ray analysis complete - no explosive signature detected; opening package using remote tools; all-clear expected within 15 minutes'
-        };
-      case '3a':
-        return {
-          description: 'EMS mass casualty triage and medical response at Secaucus Junction; coordinated transport to three regional trauma centers.',
-          location: 'Secaucus Junction NJ Transit Station',
-          status: 'Active',
-          startTime: 'June 28, 2026 12:25',
-          estimatedVolume: '~18 patients; 3 critical, 10 moderate, 5 minor',
-          shorelineImpact: 'Medical response - multi-agency coordination',
-          responsibleParty: 'Hudson County EMS / DHS Surface Division (parent incident)',
-          incidentCommander: 'EMS Battalion Chief',
-          lastUpdate: 'All critical patients transported; moderate injuries being staged for transport; on-site triage complete'
-        };
-      case '3b':
-        return {
-          description: 'NJ Transit system rerouting and schedule adjustments to maintain spectator flow to MetLife Stadium while Secaucus Junction remains closed.',
-          location: 'NJ Transit Operations Center',
-          status: 'Monitoring',
-          startTime: 'June 28, 2026 12:30',
-          estimatedVolume: '~12 trains rerouted; 4,500 passengers affected',
-          shorelineImpact: 'N/A - Transit coordination operation',
-          responsibleParty: 'NJ Transit / TSA Surface Division (parent incident)',
-          incidentCommander: 'NJ Transit Emergency Operations Manager',
-          lastUpdate: 'Alternate routes activated; passenger notifications issued; estimated 20-minute delay impact; station security sweep complete'
         };
       default:
         return {
           description: 'World Cup security incident requiring DHS response and coordination with federal, state, and local partners.',
-          location: 'MetLife Stadium Complex and Surrounding Area',
+          location: 'World Cup Venue Complex and Surrounding Area',
           status: 'Active',
           startTime: 'June 28, 2026 12:00',
           estimatedVolume: 'TBD',
           shorelineImpact: 'Under assessment',
-          responsibleParty: 'DHS Northeast Region / FBI Joint Terrorism Task Force',
+          responsibleParty: 'DHS / FBI Joint Terrorism Task Force',
           incidentCommander: 'Unified Command - World Cup Security Operations',
           lastUpdate: 'Response operations in progress; multi-agency coordination active'
         };
@@ -491,16 +379,16 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
 
   const getActionsForIncident = (incidentId: string): ActionItem[] => {
     switch (incidentId) {
-      case '1': // Suspicious Package - MetLife Stadium
+      case '1': // Suspicious Package - Levi's Stadium, San Francisco
         return [
           {
-            title: 'Establish security perimeter and evacuate Gate E area',
+            title: 'Establish security perimeter and evacuate Gate C area',
             assignedTo: 'Operations - TSA Security Team Alpha',
             priority: 'High',
             status: 'In Progress',
             dueDate: '06/28/2026 12:15',
-            location: 'Gate E, MetLife Stadium',
-            description: 'Create 300-meter security perimeter around suspicious package. Coordinate with NJ State Police to redirect spectators to adjacent gates.',
+            location: 'Gate C, Levi\'s Stadium, Santa Clara',
+            description: 'Create 300-meter security perimeter around suspicious package. Coordinate with Santa Clara PD to redirect spectators to adjacent gates.',
             taskId: 'ICS-204-A-015',
             startedAt: '06/28/2026 11:48'
           },
@@ -510,150 +398,43 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
             priority: 'High',
             status: 'In Progress',
             dueDate: '06/28/2026 12:00',
-            location: 'Gate E Screening Area',
-            description: 'Conduct systematic K9 sweep of Gate E area and surrounding concourse. Clear all secondary locations before EOD assessment.',
+            location: 'Gate C Screening Area, Levi\'s Stadium',
+            description: 'Conduct systematic K9 sweep of Gate C area and surrounding concourse. Clear all secondary locations before EOD assessment.',
             taskId: 'ICS-215-E-022',
             startedAt: '06/28/2026 11:52'
           },
           {
             title: 'Coordinate EOD response and threat assessment',
-            assignedTo: 'FBI EOD Team - Joint Operations',
+            assignedTo: 'FBI EOD Team - San Francisco Field Office',
             priority: 'High',
             status: 'Pending',
             dueDate: '06/28/2026 12:30',
-            location: 'Gate E Hot Zone',
+            location: 'Gate C Hot Zone, Levi\'s Stadium',
             description: 'Deploy EOD technicians with portable X-ray and chemical detection. Assess threat level and execute neutralization protocol if needed.',
             taskId: 'ICS-204-L-008'
           }
         ];
-      case '2': // Credentialing Fraud
+      case '5': // Credible Threat Assessment - Seattle
         return [
           {
-            title: 'Detain suspects and secure counterfeit credentials',
-            assignedTo: 'Operations - CBP Special Agents',
-            priority: 'High',
-            status: 'In Progress',
-            dueDate: '06/28/2026 10:00',
-            location: 'VIP Credentialing Center, American Dream Complex',
-            description: 'Detain individuals attempting to use counterfeit FIFA passes. Preserve evidence and coordinate with FBI for questioning.',
-            taskId: 'ICS-204-O-031',
-            startedAt: '06/28/2026 09:35'
-          },
-          {
-            title: 'Enhance credential verification protocols',
-            assignedTo: 'CBP Document Analysis Unit',
-            priority: 'High',
-            status: 'In Progress',
-            dueDate: '06/28/2026 10:30',
-            location: 'All Credential Checkpoints',
-            description: 'Deploy enhanced hologram verification and UV scanning at all checkpoints. Coordinate with FIFA security for database cross-referencing.',
-            taskId: 'ICS-215-E-018',
-            startedAt: '06/28/2026 09:40'
-          },
-          {
-            title: 'Issue security alert to all checkpoints',
-            assignedTo: 'Operations - Security Communications',
-            priority: 'High',
-            status: 'Completed',
-            dueDate: '06/28/2026 09:45',
-            location: 'All Security Operations',
-            description: 'Distribute photos and characteristics of counterfeit credentials to all screening personnel. Update watch list database.',
-            taskId: 'ICS-204-S-012',
-            startedAt: '06/28/2026 09:32',
-            completedAt: '06/28/2026 09:42'
-          }
-        ];
-      case '3': // Mass Casualty - NJ Transit
-        return [
-          {
-            title: 'Deploy EMS triage and treat casualties',
-            assignedTo: 'Operations - Hudson County EMS',
-            priority: 'High',
-            status: 'In Progress',
-            dueDate: '06/28/2026 12:45',
-            location: 'Secaucus Junction Station',
-            description: 'Establish triage area and assess all casualties. Prioritize critical patients for immediate transport to trauma centers.',
-            taskId: 'ICS-204-M-005',
-            startedAt: '06/28/2026 12:22'
-          },
-          {
-            title: 'Coordinate multi-hospital patient distribution',
-            assignedTo: 'Logistics - Regional EMS Coordination',
-            priority: 'High',
-            status: 'In Progress',
-            dueDate: '06/28/2026 13:00',
-            location: 'Regional Hospital Network',
-            description: 'Coordinate patient transport to Jersey City Medical Center, Hackensack UMC, and Morristown Medical. Confirm bed availability.',
-            taskId: 'ICS-204-R-011',
-            startedAt: '06/28/2026 12:28'
-          },
-          {
-            title: 'Activate alternate transit routing plan',
-            assignedTo: 'Planning Section - NJ Transit Operations',
-            priority: 'Medium',
-            status: 'Pending',
-            dueDate: '06/28/2026 13:15',
-            location: 'NJ Transit Operations Center',
-            description: 'Implement pre-planned transit rerouting to maintain spectator flow to stadium. Issue passenger notifications via app and station displays.',
-            taskId: 'ICS-215-P-007'
-          }
-        ];
-      case '4': // Unauthorized Drone
-        return [
-          {
-            title: 'Neutralize drone using Counter-UAS system',
-            assignedTo: 'DHS Counter-UAS Operations Team',
-            priority: 'High',
-            status: 'In Progress',
-            dueDate: '06/28/2026 13:50',
-            location: 'Stadium Airspace',
-            description: 'Deploy RF jamming to force drone landing. Track landing location for evidence recovery and operator identification.',
-            taskId: 'ICS-215-E-024',
-            startedAt: '06/28/2026 13:46'
-          },
-          {
-            title: 'Locate and apprehend drone operator',
-            assignedTo: 'Operations - FBI Field Response Team',
-            priority: 'Medium',
-            status: 'In Progress',
-            dueDate: '06/28/2026 14:15',
-            location: 'Meadowlands Complex Perimeter',
-            description: 'Use geo-tracking data to locate drone operator. Coordinate with local law enforcement for apprehension and questioning.',
-            taskId: 'ICS-204-M-019',
-            startedAt: '06/28/2026 13:48'
-          },
-          {
-            title: 'Issue FAA TFR violation report',
-            assignedTo: 'Operations - FAA Liaison',
-            priority: 'High',
-            status: 'Pending',
-            dueDate: '06/28/2026 14:00',
-            location: 'FAA Regional Operations',
-            description: 'Document TFR violation and coordinate with FAA for enforcement action. Preserve drone as evidence for investigation.',
-            taskId: 'ICS-204-U-003'
-          }
-        ];
-      case '5': // Credible Threat Assessment
-        return [
-          {
-            title: 'Maintain continuous surveillance on suspect',
+            title: 'Maintain continuous surveillance on suspects',
             assignedTo: 'Operations - FBI Surveillance Team',
             priority: 'High',
             status: 'In Progress',
             dueDate: '06/28/2026 15:00',
-            location: 'Suspect Location - Newark Area',
-            description: 'Deploy mobile surveillance teams to maintain eyes-on suspect and known associates. Coordinate with JTTF for tactical support if needed.',
+            location: 'Suspect Location - Pioneer Square, Seattle',
+            description: 'Deploy mobile surveillance teams to maintain eyes-on suspects and known associates in the Pioneer Square district. Coordinate with JTTF Seattle Field Office for tactical support if needed.',
             taskId: 'ICS-204-M-027',
             startedAt: '06/27/2026 23:00'
           },
           {
-            title: 'Pre-position tactical response teams',
+            title: 'Pre-position tactical response teams at Lumen Field',
             assignedTo: 'Operations - FBI HRT / Secret Service CAT',
             priority: 'High',
             status: 'In Progress',
             dueDate: '06/28/2026 14:00',
-            location: 'Strategic Positions - Stadium Perimeter',
-            description: 'Deploy tactical teams at strategic locations around stadium complex. Establish rapid response protocols if threat materializes.',
+            location: 'Strategic Positions - Lumen Field Perimeter, Seattle',
+            description: 'Deploy tactical teams at strategic locations around Lumen Field and adjacent transit stations. Establish rapid response protocols if threat materializes.',
             taskId: 'ICS-204-B-014',
             startedAt: '06/28/2026 08:00'
           },
@@ -663,12 +444,12 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
             priority: 'High',
             status: 'Pending',
             dueDate: '06/28/2026 12:00',
-            location: 'Joint Operations Center',
-            description: 'Maintain open communication with FBI, NSA, and international partners. Update threat assessment every 30 minutes.',
+            location: 'Joint Operations Center - Seattle',
+            description: 'Maintain open communication with FBI Seattle Field Office, NSA, and international partners. Update threat assessment every 30 minutes.',
             taskId: 'ICS-215-E-016'
           }
         ];
-      case '6': // Cyber Attack - CCTV Network
+      case '6': // Cyber Attack - Hard Rock Stadium CCTV Network, Miami
         return [
           {
             title: 'Isolate infected network segments',
@@ -676,8 +457,8 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
             priority: 'High',
             status: 'In Progress',
             dueDate: '06/28/2026 09:00',
-            location: 'Stadium Security Operations Center',
-            description: 'Isolate compromised CCTV network segments to prevent malware spread. Activate backup analog camera systems for coverage.',
+            location: 'Hard Rock Stadium Security Operations Center, Miami Gardens',
+            description: 'Isolate compromised CCTV network segments to prevent malware spread. Activate backup analog camera systems for coverage across north and east concourses.',
             taskId: 'ICS-204-M-037',
             startedAt: '06/28/2026 08:35'
           },
@@ -687,17 +468,17 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
             priority: 'High',
             status: 'Pending',
             dueDate: '06/28/2026 11:00',
-            location: 'DHS Cyber Operations Center',
-            description: 'Perform detailed forensic analysis of malware to identify threat actor and attack vector. Coordinate with FBI Cyber Division.',
+            location: 'DHS Cyber Operations Center - Miami',
+            description: 'Perform detailed forensic analysis of malware to identify threat actor and attack vector. Coordinate with FBI Cyber Division - Miami Field Office.',
             taskId: 'ICS-204-R-018'
           },
           {
             title: 'Deploy enhanced foot patrols to compensate',
-            assignedTo: 'Operations - Stadium Security Patrols',
+            assignedTo: 'Operations - Hard Rock Stadium Security Patrols',
             priority: 'Medium',
             status: 'In Progress',
             dueDate: '06/28/2026 09:30',
-            location: 'North Concourse - MetLife Stadium',
+            location: 'North & East Concourses - Hard Rock Stadium',
             description: 'Increase roving security patrols in areas with degraded camera coverage. Coordinate with Secret Service for VIP protection zones.',
             taskId: 'ICS-215-W-009',
             startedAt: '06/28/2026 08:40'
@@ -1042,7 +823,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     });
   };
 
-  // Filter objectives based on search term and incident type
+  // Filter objectives based on search term and Category
   const filteredObjectives = objectives.filter(objective => {
     // Filter by search term
     if (searchTerm) {
@@ -1055,7 +836,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
       if (!matchesSearch) return false;
     }
     
-    // Filter by incident type
+    // Filter by Category
     if (selectedIncidentTypes.length > 0) {
       const incidentType = getIncidentType(objective);
       if (!selectedIncidentTypes.includes(incidentType)) return false;
@@ -1076,7 +857,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
     return true;
   });
 
-  // Handler for incident type selection
+  // Handler for Category selection
   const toggleIncidentType = (type: string) => {
     setSelectedIncidentTypes(prev => 
       prev.includes(type) 
@@ -1174,9 +955,9 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
 
       {/* Filters Section - Three Columns */}
       <div className="flex gap-3">
-        {/* Incident Type Filter */}
+        {/* Category Filter */}
         <div className="flex-1 space-y-2 px-4 py-3 bg-[#222529] rounded-lg border border-[#6e757c]">
-          <span className="caption text-white whitespace-nowrap block">Incident Type:</span>
+          <span className="caption text-white whitespace-nowrap block">Category:</span>
           <div className="flex items-center gap-2">
             <Popover open={isIncidentTypePopoverOpen} onOpenChange={setIsIncidentTypePopoverOpen}>
               <PopoverTrigger asChild>
@@ -1200,7 +981,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
               <PopoverContent className="w-[300px] p-0 bg-[#222529] border-[#6e757c]" align="start">
                 <Command className="bg-[#222529]">
                   <CommandInput 
-                    placeholder="Search incident type..." 
+                    placeholder="Search Category..." 
                     className="h-9 caption text-white"
                     style={{ 
                       fontFamily: "'Open Sans', sans-serif",
@@ -1210,7 +991,7 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
                     }}
                   />
                   <CommandList>
-                    <CommandEmpty className="caption text-white/70 p-2">No incident type found.</CommandEmpty>
+                    <CommandEmpty className="caption text-white/70 p-2">No Category found.</CommandEmpty>
                     <CommandGroup>
                       {incidentTypes.map((type) => (
                         <CommandItem
@@ -1830,10 +1611,10 @@ export function ObjectivesActionsPhase({ data = {}, onDataChange, onComplete, on
               <div className="w-1/2 border border-border rounded-lg overflow-hidden">
                 <arcgis-embedded-map
                   style={{ height: '100%', width: '100%', display: 'block' }}
-                  item-id="6cfd425bdabc430789213e791dc6acb9"
+                  item-id="c1a7e5587f4941f49d340d49dc7a0000"
                   theme="light"
-                  center="-74.03131343667845,40.761717806888804"
-                  scale="72223.819286"
+                  center="-80.16200440365937,25.87478023462914"
+                  scale="577790.554289"
                   portal-url="https://disastertech.maps.arcgis.com"
                 />
               </div>
