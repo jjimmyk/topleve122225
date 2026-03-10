@@ -3,7 +3,7 @@ import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ChevronDown, ChevronRight, Edit2, Trash2, Map, X, Check, ArrowRightToLine, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit2, Trash2, Map, X, Check, ArrowRightToLine, Sparkles, AlertTriangle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../ui/sheet';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Label } from '../ui/label';
@@ -4003,6 +4003,10 @@ export function AlertsPhase({ data, onDataChange, onZoomToLocation, onAddAIConte
                 toast.success('204 update notification sent to Division Alpha.');
                 setTimeout(() => {
                   setUasShootdownVisible(true);
+                  toast('Field Report: UAS Neutralized Approaching Levi Stadium TFR', {
+                    icon: <AlertTriangle className="w-4 h-4 text-red-500" />,
+                    style: { border: '1px solid #ef4444', backgroundColor: '#222529', color: 'white' },
+                  });
                 }, 5000);
               }}
               className="bg-[#01669f] hover:bg-[#01669f]/90 text-white"
